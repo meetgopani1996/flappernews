@@ -1,27 +1,37 @@
 var app = angular.module('flapperNews', ['ui.router']);
 
 app.config([
-'$stateProvider',
-'$urlRouterProvider',
-function($stateProvider, $urlRouterProvider) {
+    '$stateProvider',
+    '$urlRouterProvider',
+    function($stateProvider, $urlRouterProvider) {
 
-  $stateProvider
-    .state('home', {
-      url: '/home',
-      templateUrl: '/home.html',
-      controller: 'MainCtrl'
-    });
+        //home route
+        $stateProvider
+            .state('home', {
+                url: '/home',
+                templateUrl: '/home.html',
+                controller: 'MainCtrl'
+            })
+            .state('posts', {
+                url: '/posts/{id}',
+                templateUrl: '/posts.html',
+                controller: 'PostsCtrl'
+            });
 
-  $urlRouterProvider.otherwise('home');
-}]);
+        $urlRouterProvider.otherwise('home');
+    }
+]);
 
-app.factory('posts', [function() {
-    var o = {
-        posts: []
-    };
-    return o;
-}]);
+app.factory('posts', [
+    function() {
+        var o = {
+            posts: []
+        };
+        return o;
+    }
+]);
 
+//home controller
 app.controller('MainCtrl', [
     '$scope',
     'posts',
@@ -29,27 +39,6 @@ app.controller('MainCtrl', [
 
         //creating a global scope for posts 
         $scope.posts = posts.posts;
-
-        //predefining the posts variable
-        $scope.posts = [{
-            title: 'post 1',
-            upvotes: 5
-        }, {
-            title: 'post 2',
-            upvotes: 2
-        }, {
-            title: 'post 3',
-            upvotes: 15
-        }, {
-            title: 'post 4',
-            upvotes: 9
-        }, {
-            title: 'post 5',
-            upvotes: 4
-        }];
-
-        // set hello world value to test
-        $scope.test = "Hello World!";
 
         //function to add new post
         $scope.addPost = function() {
@@ -63,12 +52,18 @@ app.controller('MainCtrl', [
             $scope.posts.push({
                 title: $scope.title,
                 link: $scope.link,
-                upvotes: 0
+                upvotes: 0,
+                comments: [
+                    { author: 'Joe', body: 'Cool post!', upvotes: 0 },
+                    { author: 'Bob', body: 'Great idea but everything is wrong!', upvotes: 0 }
+                ]
             });
 
             //empty the string
             $scope.title = '';
             $scope.link = '';
+
+            // console.log($scope);
         };
 
         //function to increment the votes
@@ -76,4 +71,34 @@ app.controller('MainCtrl', [
             post.upvotes += 1;
         };
     }
+])
+
+
+//post controller
+app.controller('PostsCtrl', [
+    '$scope',
+    '$stateParams',
+    'posts',
+    function($scope, $stateParams, posts) {
+
+        //get the id of the post
+        $scope.post = posts.posts[$stateParams.id];
+
+        //function to add comment for the given post
+        $scope.addComment = function() {
+            if ($scope.body === '') { return; }
+            $scope.post.comments.push({
+                body: $scope.body,
+                author: 'user',
+                upvotes: 0
+            });
+            $scope.body = '';
+        };
+
+        //increment the votes in comments
+        $scope.incrementUpvotes = function(comment) {
+            comment.upvotes += 1;
+        };
+    }
+
 ])
