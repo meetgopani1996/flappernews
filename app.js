@@ -1,10 +1,21 @@
 var app = angular.module('flapperNews', []);
 
+app.factory('posts', [function() {
+    var o = {
+        posts: []
+    };
+    return o;
+}]);
+
 app.controller('MainCtrl', [
     '$scope',
-    function($scope) {
+    'posts',
+    function($scope, posts) {
 
-    	//predefining the posts variable
+        //creating a global scope for posts 
+        $scope.posts = posts.posts;
+
+        //predefining the posts variable
         $scope.posts = [{
             title: 'post 1',
             upvotes: 5
@@ -28,7 +39,7 @@ app.controller('MainCtrl', [
         //function to add new post
         $scope.addPost = function() {
 
-        	//validation to check if the title is not null
+            //validation to check if the title is not null
             if (!$scope.title || $scope.title === '') {
                 return;
             }
@@ -46,7 +57,7 @@ app.controller('MainCtrl', [
         };
 
         //function to increment the votes
-        $scope.incrementUpvotes = function(post){
+        $scope.incrementUpvotes = function(post) {
             post.upvotes += 1;
         };
     }
