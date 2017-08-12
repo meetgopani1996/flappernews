@@ -3,6 +3,8 @@ var app = angular.module('flapperNews', []);
 app.controller('MainCtrl', [
     '$scope',
     function($scope) {
+
+    	//predefining the posts variable
         $scope.posts = [{
             title: 'post 1',
             upvotes: 5
@@ -23,15 +25,29 @@ app.controller('MainCtrl', [
         // set hello world value to test
         $scope.test = "Hello World!";
 
+        //function to add new post
         $scope.addPost = function() {
-        	if (!$scope.title || $scope.title === '') {
-        		return;
-        	}
+
+        	//validation to check if the title is not null
+            if (!$scope.title || $scope.title === '') {
+                return;
+            }
+
+            //add post 
             $scope.posts.push({
                 title: $scope.title,
+                link: $scope.link,
                 upvotes: 0
             });
-            $scope.title='';
+
+            //empty the string
+            $scope.title = '';
+            $scope.link = '';
+        };
+
+        //function to increment the votes
+        $scope.incrementUpvotes = function(post){
+            post.upvotes += 1;
         };
     }
 ])
